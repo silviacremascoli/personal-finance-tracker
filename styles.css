@@ -1,0 +1,374 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #C9CAAC;
+    color: #333;
+    padding: 40px 20px;
+}
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h1 {
+    margin-bottom: 25px;
+    color: #2c3e50;
+}
+
+h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #34495e;
+}
+
+.app-input,
+.app-select {
+    padding: 10px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 20px;
+    font-size: 14px;
+    outline: none;
+    background-color: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.app-input:focus,
+.app-select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.app-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+.btn-success {
+    background-color: #2ecc71;
+    color: #fff;
+
+    &:hover {
+        background-color: #27ae60;
+    }
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    color: #fff;
+
+    &:hover {
+        background-color: #c0392b;
+    }
+}
+
+.transaction-form, .stats-row {
+    display: flex;
+    margin-bottom: 30px;
+}
+
+.transaction-form {
+    gap: 10px;
+}
+
+.stats-row {
+    gap: 20px;
+
+    .stat-card {
+        flex: 1;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border-left: 5px solid #ccc;
+
+        .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #7f8c8d;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        &.box-balance {
+            border-left-color: #3498db;
+        }
+
+        &.box-income {
+            border-left-color: #2ecc71;
+            color: #27ae60;
+        }
+
+        &.box-expenses {
+            border-left-color: #e74c3c;
+            color: #c0392b;
+        }
+    }
+}
+
+.chart-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+
+    .color-food {
+        background-color: #f1c40f;
+    }
+
+    .color-utilities {
+        background-color: #9b59b6;
+    }
+
+    .color-shopping {
+        background-color: #e67e22;
+    }
+
+    .color-rent {
+        background-color: #2596be;
+    }
+
+    .progress-track {
+        display: flex;
+        height: 24px;
+        width: 100%;
+        background-color: #ecf0f1;
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 15px 0;
+
+        .bar-segment {
+            height: 100%;
+            transition: width 0.4s ease-out;
+        }
+    }
+
+
+    .chart-legend {
+        display: flex;
+        gap: 25px;
+        margin-top: 10px;
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #555;
+
+            .indicator {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                display: inline-block;
+            }
+        }
+    }
+}
+
+.main-workspace {
+    display: flex;
+    gap: 30px;
+
+    .ledger-section {
+        flex: 2;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+
+        &[data-empty="true"] {
+            .no-transaction-container {
+                display: block;
+            }
+
+            .data-list:has(.li-headers) {
+                display: none;
+            }
+        }
+
+        .filter-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+
+            .search-wrapper {
+                position: relative;
+                flex: 1;
+                max-width: 300px;
+
+                input {
+                    width: 100%;
+                    padding-right: 36px;
+                }
+
+                .delete-btn {
+                    position: absolute;
+                    right: 12px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: none;
+                    border: none;
+                    color: #94a3b8;
+                    cursor: pointer;
+                    font-size: 14px;
+
+                    &:hover {
+                        color: #e74c3c;
+                    }
+                }
+            }
+
+            .filter-tabs {
+                display: flex;
+                gap: 5px;
+
+                .tab-btn {
+                    background: #fff;
+                    color: #64748b;
+                    border: 1px solid #cbd5e1;
+                    padding: 6px 14px;
+                    font-size: 13px;
+                    font-weight: 600;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    transition: all 0.2s ease-in-out;
+
+                    &:hover {
+                        background-color: #f1f5f9;
+                        color: #334155;
+                    }
+
+                    &.active {
+                        background-color: #34495e;
+                        color: #fff;
+                        border-color: #34495e;
+                    }
+                }
+            }
+        }
+
+        .no-transaction-container {
+            display: none;
+
+            #noTransactionFound {
+                .highlight {
+                    font-weight: 600;
+                    color: #2563eb;
+                    background-color: #eff6ff;
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                }
+            }
+
+            #clearFilters, #noTransactionFound {
+                padding: 12px 15px;
+            }
+        }
+
+        .data-list {
+            list-style: none;
+
+            &:has(.li-headers) {
+                display: block;
+            }
+
+            li {
+                padding: 12px 15px;
+                border-bottom: 1px solid #ecf0f1;
+                display: grid;
+                grid-template-columns: 1fr 120px 100px 40px;
+                align-items: center;
+
+                &.li-headers {
+                    span {
+                        font-weight: bold;
+                    }
+                }
+
+                &:last-child {
+                    border-bottom: none;
+                }
+
+                .delete-btn {
+                    color: #E03F4F;
+                    background-color: transparent;
+                    font-size: 20px;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 4px 8px 4px 16px;
+                    cursor: pointer;
+                    justify-self: end;
+                }
+
+                .transaction-description {
+                    text-align: left;
+                }
+
+                .transaction-amount {
+                    text-align: right;
+                    padding-right: 20px;
+                }
+
+                .transaction-category {
+                    text-align: right;
+                    padding-right: 20px;
+                }
+            }
+        }
+    }
+
+    .sidebar-section {
+        flex: 1;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border-top: 4px solid #f1c40f;
+
+        .food-list li {
+            background-color: #fef9e7;
+            margin-bottom: 8px;
+            border: 1px solid #fdebd0;
+            border-radius: 6px;
+            font-weight: bold;
+            color: #d35400;
+            grid-template-columns: 1fr 60px;
+
+            .transaction-amount {
+                padding-right: 0;
+            }
+        }
+    }
+}
