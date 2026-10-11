@@ -12,6 +12,8 @@ const ledgerSection = document.querySelector('.ledger-section');
 const foodListEl = document.getElementById('foodList');
 const noTransactionFound = document.getElementById('noTransactionFound');
 const clearFiltersButton = document.getElementById('clearFilters');
+const formStatus = document.getElementById('formStatus');
+const expenseChart = document.getElementById('expenseChart');
 
 // transaction's user inputs
 const amountInput = document.getElementById('amountInput');
@@ -43,7 +45,53 @@ const addTransactionsToStorage = ()=> {
     localStorage.setItem('transactions', transactionsString);
 }
 
+const announceStatus = (message) => {
+    // update the text content of the formStatus element with the provided message
+    if (formStatus) {
+        formStatus.textContent = message;
+    }
+};
+
+const validateTransactionInput = () => {
+    const description = descriptionInput.value.trim();
+    const amountValue = Number(amountInput.value);
+    const selectedCategory = categorySelect.value;
+
+    // announce the first invalid input and set focus to it, also set aria-invalid attribute to true
+    if (!description) {
+        announceStatus('Please enter a transaction description.');
+        descriptionInput.focus();
+        descriptionInput.setAttribute('aria-invalid', 'true');
+        return false;
+    }
+
+    if (!selectedCategory) {
+        announceStatus('Please select a transaction category.');
+        categorySelect.focus();
+        categorySelect.setAttribute('aria-invalid', 'true');
+        return false;
+    }
+
+    if (amountInput.value.trim() === '' || Number.isNaN(amountValue) || amountValue <= 0) {
+        announceStatus('Please enter an amount greater than zero.');
+        amountInput.focus();
+        amountInput.setAttribute('aria-invalid', 'true');
+        return false;
+    }
+
+    // if all inputs are valid, remove aria-invalid attribute from all inputs and return true
+    descriptionInput.removeAttribute('aria-invalid');
+    amountInput.removeAttribute('aria-invalid');
+    categorySelect.removeAttribute('aria-invalid');
+    return true;
+};
+
 addTransactionButton.addEventListener('click', () => {
+    // validate user inputs before creating a transaction object
+    if (!validateTransactionInput()) {
+        return;
+    }
+
     // turn amount input value into a number
     const rawAmount = Number(amountInput.value);
     // if the selected category is Income, the number stays positive, if not, the number turns negative
@@ -53,7 +101,7 @@ addTransactionButton.addEventListener('click', () => {
         // create unique ID
         id: Date.now(),
         // assign description input value
-        description: descriptionInput.value,
+        description: descriptionInput.value.trim(),
         // assign formatted amount input value
         amount: formattedAmount,
         // assign category select value
@@ -68,6 +116,8 @@ addTransactionButton.addEventListener('click', () => {
     generateTransactionsElements(getFilteredTransactions());
     // regenerate food transactions list items
     generateFoodTransactions();
+    // announce that the transaction was added successfully
+    announceStatus('Transaction added successfully.');
 
     // clear value in description input
     descriptionInput.value = '';
@@ -112,8 +162,14 @@ clearFiltersButton.addEventListener('click', () => {
     currentCategory = "All";
 
     // put active class back to "All" filter
-    filterTabs.forEach(btn => btn.classList.toggle('active', btn.dataset.filter === 'All'));
+    filterTabs.forEach(btn => {
+        // check if the button's data-filter attribute is "All" and toggle the active class accordingly
+        const isActive = btn.dataset.filter === 'All';
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
+    });
     generateTransactionsElements();
+    announceStatus('Filters cleared.');
 })
 
 // update currentCategory variable when clicking on filter tabs and update active class accordingly
@@ -123,8 +179,14 @@ filterTabsContainer.addEventListener('click', (event) => {
     if (clickedTab) {
         currentCategory = clickedTab.getAttribute('data-filter');
         // toggle active class only if the button matches the clicked tab
-        filterTabs.forEach(btn => btn.classList.toggle('active', btn === clickedTab));
+        filterTabs.forEach(btn => {
+            // check if the button matches the clicked tab and toggle the active class accordingly
+            const isActive = btn === clickedTab;
+            btn.classList.toggle('active', isActive);
+            btn.setAttribute('aria-pressed', String(isActive));
+        });
         generateTransactionsElements(getFilteredTransactions());
+        announceStatus(`Showing ${currentCategory} transactions.`);
     }
 })
 
@@ -229,6 +291,14 @@ const generateTransactionsElements = (listToRender = transactions) => {
     barShopping.style.width = shoppingExpensesPercentage;
     barRent.style.width = rentExpensesPercentage;
 
+    if (expenseChart) {
+        // set aria-label for expense chart with percentages of each category
+        expenseChart.setAttribute(
+            'aria-label',
+            `Expense distribution chart: Food ${foodExpensesPercentage}, Utilities ${utilitiesExpensesPercentage}, Shopping ${shoppingExpensesPercentage}, Rent ${rentExpensesPercentage}.`
+        );
+    }
+
     // display accumulator value as transaction balances
     netBalanceEl.innerHTML = `${euroFormatter.format(separateBalances.totalBalance)}`;
     totalIncomeEl.innerHTML = `${euroFormatter.format(separateBalances.totalIncome)}`;
@@ -257,7 +327,9 @@ const generateTransactionsElements = (listToRender = transactions) => {
         // create a delete button in each task
         const deleteButton = document.createElement('button');
         deleteButton.classList.add('delete-btn');
-        deleteButton.innerHTML = "<i class=\"fa-solid fa-trash-can\"></i>";
+        deleteButton.type = 'button';
+        deleteButton.setAttribute('aria-label', `Delete ${transaction.description} transaction`);
+        deleteButton.innerHTML = "<i class=\"fa-solid fa-trash-can\" aria-hidden=\"true\"></i>";
 
         // add event listener to delete button: remove transaction from array based on its ID, generate the list items again without it and save the new array to local storage
         deleteButton.addEventListener('click', (e) => {
@@ -265,6 +337,7 @@ const generateTransactionsElements = (listToRender = transactions) => {
             addTransactionsToStorage(transactions);
             generateTransactionsElements();
             generateFoodTransactions();
+            announceStatus(`Deleted ${transaction.description} transaction.`);
         })
 
         // append spans to list item

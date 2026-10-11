@@ -13,15 +13,20 @@
 <div class="dashboard-container">
     <h1>Personal Finance Tracker</h1>
 
-    <div id="transactionsForm" class="transaction-form">
-        <label aria-label="Enter transaction description" for="descriptionInput"></label>
-        <input type="text" placeholder="Enter description..." id="descriptionInput" class="app-input" />
-        <label aria-label="Enter transaction amount" for="amountInput"></label>
-        <input type="number" step="0.01" placeholder="Enter amount..." id="amountInput" class="app-input" />
+    <div id="transactionsForm" class="transaction-form" aria-label="Add a new transaction">
+        <div class="field-group">
+            <label for="descriptionInput" class="sr-only">Transaction description</label>
+            <input type="text" placeholder="Enter description..." id="descriptionInput" class="app-input" aria-label="Transaction description" />
+        </div>
 
-        <label for="categorySelect"></label>
-        <div class="select-wrapper">
-            <select id="categorySelect" class="app-select" aria-label="Select transaction category">
+        <div class="field-group">
+            <label for="amountInput" class="sr-only">Transaction amount</label>
+            <input type="number" step="0.01" placeholder="Enter amount..." id="amountInput" class="app-input" aria-label="Transaction amount" />
+        </div>
+
+        <div class="field-group select-wrapper">
+            <label for="categorySelect" class="sr-only">Transaction category</label>
+            <select id="categorySelect" class="app-select" aria-label="Transaction category">
                 <option value="" disabled selected hidden>Select category...</option>
                 <option value="Food">Food</option>
                 <option value="Income">Income</option>
@@ -29,13 +34,16 @@
                 <option value="Utilities">Utilities</option>
                 <option value="Shopping">Shopping</option>
             </select>
-            <i class="fa-solid fa-chevron-down select-icon"></i>
+            <i class="fa-solid fa-chevron-down select-icon" aria-hidden="true"></i>
         </div>
 
-        <button id="addTransactionBtn" class="app-btn" aria-label="Add transaction">
-            <i class="fa-solid fa-plus"></i>
+        <button id="addTransactionBtn" class="app-btn" type="button" aria-label="Add transaction">
+            <span class="sr-only">Add transaction</span>
+            <i class="fa-solid fa-plus" aria-hidden="true"></i>
         </button>
     </div>
+
+    <div id="formStatus" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
     <div class="stats-row">
         <div class="stat-card box-balance">
@@ -52,14 +60,15 @@
         </div>
     </div>
 
-    <div class="chart-card">
-        <h2>Expense Distribution Breakdown</h2>
+    <div class="chart-card" aria-labelledby="expenseDistributionHeading" aria-describedby="expenseDistributionSummary">
+        <h2 id="expenseDistributionHeading">Expense Distribution Breakdown</h2>
+        <p id="expenseDistributionSummary" class="sr-only">Expense totals are shown as percentages for each category.</p>
 
-        <div class="progress-track">
-            <div id="barFood" class="bar-segment color-food" style="width: 0%"></div>
-            <div id="barUtilities" class="bar-segment color-utilities" style="width: 0%"></div>
-            <div id="barShopping" class="bar-segment color-shopping" style="width: 0%"></div>
-            <div id="barRent" class="bar-segment color-rent" style="width: 0%"></div>
+        <div id="expenseChart" class="progress-track" role="img" aria-label="Expense distribution chart: Food 0%, Utilities 0%, Shopping 0%, Rent 0%">
+            <div id="barFood" class="bar-segment color-food" style="width: 0%" aria-hidden="true"></div>
+            <div id="barUtilities" class="bar-segment color-utilities" style="width: 0%" aria-hidden="true"></div>
+            <div id="barShopping" class="bar-segment color-shopping" style="width: 0%" aria-hidden="true"></div>
+            <div id="barRent" class="bar-segment color-rent" style="width: 0%" aria-hidden="true"></div>
         </div>
 
         <div class="chart-legend">
@@ -86,30 +95,30 @@
         <div class="ledger-section" data-empty="false">
             <h2>Transaction Log</h2>
 
-            <div id="filterToolbar" class="filter-toolbar">
+            <div id="filterToolbar" class="filter-toolbar" aria-label="Transaction filters">
                 <div class="search-wrapper">
-                    <label for="searchInput"></label>
-                    <input type="text" placeholder="Search description..." id="searchInput" class="app-input" />
+                    <label for="searchInput" class="sr-only">Search by transaction description</label>
+                    <input type="text" placeholder="Search description..." id="searchInput" class="app-input" aria-label="Search by transaction description" />
                     <button type="button" id="deleteSearchBtn" class="delete-btn" aria-label="Clear search description">
-                        <i class="fa-solid fa-xmark"></i>
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                     </button>
                 </div>
 
-                <div class="filter-tabs">
-                    <button class="tab-btn active" data-filter="All">All</button>
-                    <button class="tab-btn" data-filter="Income">Income</button>
-                    <button class="tab-btn" data-filter="Utilities">Utilities</button>
-                    <button class="tab-btn" data-filter="Shopping">Shopping</button>
-                    <button class="tab-btn" data-filter="Food">Food</button>
-                    <button class="tab-btn" data-filter="Rent">Rent</button>
+                <div class="filter-tabs" role="group" aria-label="Filter transactions by category">
+                    <button type="button" class="tab-btn active" data-filter="All" aria-pressed="true">All</button>
+                    <button type="button" class="tab-btn" data-filter="Income" aria-pressed="false">Income</button>
+                    <button type="button" class="tab-btn" data-filter="Utilities" aria-pressed="false">Utilities</button>
+                    <button type="button" class="tab-btn" data-filter="Shopping" aria-pressed="false">Shopping</button>
+                    <button type="button" class="tab-btn" data-filter="Food" aria-pressed="false">Food</button>
+                    <button type="button" class="tab-btn" data-filter="Rent" aria-pressed="false">Rent</button>
                 </div>
             </div>
 
-            <div class="no-transaction-container">
+            <div class="no-transaction-container" role="status" aria-live="polite" aria-atomic="true">
                 <p id="noTransactionFound"></p>
-                <button id="clearFilters" class="app-btn">
+                <button id="clearFilters" type="button" class="app-btn" aria-label="Clear all filters">
                     <span>Clear filters</span>
-                    <i class="fa-solid fa-trash-can"></i>
+                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
                 </button>
             </div>
 
