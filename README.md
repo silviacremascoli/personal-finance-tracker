@@ -2,7 +2,7 @@
 
 A clean, responsive financial dashboard built with vanilla JavaScript, modern CSS, and state-driven DOM management.
 
-![image.png](![Preview Finance Tracker](image.png))
+![Preview of the Personal Finance Dashboard](images/image.png)
 
 ## ✨ Features
 - **Real-Time Analytics**: Automatically updates total balance, income, expenses, and category percentage distributions.
