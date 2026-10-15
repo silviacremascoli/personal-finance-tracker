@@ -19,7 +19,7 @@ const expenseChart = document.getElementById('expenseChart');
 const amountInput = document.getElementById('amountInput');
 const descriptionInput = document.getElementById('descriptionInput');
 const categorySelect = document.getElementById('categorySelect');
-const addTransactionButton = document.getElementById('addTransactionBtn');
+const transactionForm = document.getElementById('transactionsForm');
 
 // progress bar elements
 const barFood = document.getElementById('barFood');
@@ -86,7 +86,8 @@ const validateTransactionInput = () => {
     return true;
 };
 
-addTransactionButton.addEventListener('click', () => {
+transactionForm.addEventListener('submit', (event) => {
+    event.preventDefault();
     // validate user inputs before creating a transaction object
     if (!validateTransactionInput()) {
         return;
@@ -216,12 +217,18 @@ const generateFoodTransactions = () => {
             // create description span, assign class and text to it
             const foodTransactionDescription = document.createElement("span");
             foodTransactionDescription.classList.add("transaction-description");
-            foodTransactionDescription.textContent = transaction.description;
+            const descriptionLabel = document.createElement('span');
+            descriptionLabel.classList.add('sr-only');
+            descriptionLabel.textContent = 'Description: ';
+            foodTransactionDescription.append(descriptionLabel, document.createTextNode(transaction.description));
 
             // create amount span, assign class and text to it (format currency to be positive)
             const foodTransactionAmount = document.createElement("span");
             foodTransactionAmount.classList.add("transaction-amount");
-            foodTransactionAmount.textContent = euroFormatter.format(Math.abs(transaction.amount));
+            const amountLabel = document.createElement('span');
+            amountLabel.classList.add('sr-only');
+            amountLabel.textContent = 'Amount: ';
+            foodTransactionAmount.append(amountLabel, document.createTextNode(euroFormatter.format(Math.abs(transaction.amount))));
 
             // append spans to list item
             foodTransactionListItem.append(foodTransactionDescription, foodTransactionAmount);
@@ -311,18 +318,27 @@ const generateTransactionsElements = (listToRender = transactions) => {
         // create description span, assign class and text to it
         const transactionDescription = document.createElement("span");
         transactionDescription.classList.add("transaction-description");
-        transactionDescription.textContent = transaction.description;
+        const descriptionLabel = document.createElement('span');
+        descriptionLabel.classList.add('sr-only');
+        descriptionLabel.textContent = 'Description: ';
+        transactionDescription.append(descriptionLabel, document.createTextNode(transaction.description));
 
         // create amount span, assign class and text to it
         const transactionAmount = document.createElement("span");
         transactionAmount.classList.add("transaction-amount");
+        const amountLabel = document.createElement('span');
+        amountLabel.classList.add('sr-only');
+        amountLabel.textContent = 'Amount: ';
         const formattedCurrency = euroFormatter.format(transaction.amount);
-        transactionAmount.textContent = `${formattedCurrency}`;
+        transactionAmount.append(amountLabel, document.createTextNode(formattedCurrency));
 
         // create category span, assign class and text to it
         const transactionCategory = document.createElement("span");
         transactionCategory.classList.add("transaction-category");
-        transactionCategory.textContent = transaction.category;
+        const categoryLabel = document.createElement('span');
+        categoryLabel.classList.add('sr-only');
+        categoryLabel.textContent = 'Category: ';
+        transactionCategory.append(categoryLabel, document.createTextNode(transaction.category));
 
         // create a delete button in each task
         const deleteButton = document.createElement('button');
@@ -332,11 +348,15 @@ const generateTransactionsElements = (listToRender = transactions) => {
         deleteButton.innerHTML = "<i class=\"fa-solid fa-trash-can\" aria-hidden=\"true\"></i>";
 
         // add event listener to delete button: remove transaction from array based on its ID, generate the list items again without it and save the new array to local storage
-        deleteButton.addEventListener('click', (e) => {
+        deleteButton.addEventListener('click', () => {
+            const deleteButtons = Array.from(transactionListEl.querySelectorAll('.delete-btn'));
+            const deletedIndex = deleteButtons.indexOf(deleteButton);
             transactions = transactions.filter(item => item.id !== transaction.id);
             addTransactionsToStorage(transactions);
             generateTransactionsElements();
             generateFoodTransactions();
+            const remainingDeleteButtons = transactionListEl.querySelectorAll('.delete-btn');
+            (remainingDeleteButtons[deletedIndex] || remainingDeleteButtons[remainingDeleteButtons.length - 1] || searchInput).focus();
             announceStatus(`Deleted ${transaction.description} transaction.`);
         })
 
