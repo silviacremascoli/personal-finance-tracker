@@ -6,7 +6,7 @@
 
     /* Text & Borders */
     --color-text-main: #0f172a;
-    --color-text-muted: #64748b;
+    --color-text-muted: #596579;
     --color-heading-h1: #123F36;
     --color-heading-h2: #12544F;
     --color-border: #e2e8f0;
@@ -165,7 +165,7 @@ h2 {
 
 #addTransactionBtn {
     background-color: var(--color-button);
-    color: var(--color-white);
+    color: var(--color-text-main);
 
     &:hover {
         background-color: var(--color-button-hover);
